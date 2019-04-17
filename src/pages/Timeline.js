@@ -40,10 +40,10 @@ function Timeline() {
   const [tweets, setTweets] = useState([]);
 
   async function getTweets() {
-    const token = JSON.parse(localStorage.getItem("@twitter"), {
+    const token = JSON.parse(localStorage.getItem("@twitter"));
+    const response = await api.get("/tweets", {
       headers: { Authorization: `Bearer ${token}` }
     });
-    const response = await api.get("/tweets");
     setTweets(response.data);
   }
 
@@ -65,6 +65,7 @@ function Timeline() {
     );
     setContent("");
   }
+
   useEffect(() => {
     getTweets();
   }, []);
