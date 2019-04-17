@@ -40,6 +40,9 @@ function Timeline() {
   const [tweets, setTweets] = useState([]);
 
   async function getTweets() {
+    const token = JSON.parse(localStorage.getItem("@twitter"), {
+      headers: { Authorization: `Bearer ${token}` }
+    });
     const response = await api.get("/tweets");
     setTweets(response.data);
   }
@@ -52,8 +55,15 @@ function Timeline() {
 
   async function handleSubmit(e) {
     if (e.keyCode !== 13) return;
-    await api.post('/tweets', { content })
-    setContent("")
+    const token = JSON.parse(localStorage.getItem("@twitter"));
+    await api.post(
+      "/tweets",
+      { content },
+      {
+        headers: { Authorization: `Bearer ${token}` }
+      }
+    );
+    setContent("");
   }
   useEffect(() => {
     getTweets();
@@ -66,7 +76,7 @@ function Timeline() {
   return (
     <Wrapper>
       <img height={24} src={twitterLogo} alt="GoTwitter" />
-      <Form >
+      <Form>
         <TextArea
           placeholder="O que está acontecendo?"
           value={content}
