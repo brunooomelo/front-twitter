@@ -40,7 +40,7 @@ function Timeline() {
   const [tweets, setTweets] = useState([]);
 
   async function getTweets() {
-    const token = JSON.parse(localStorage.getItem("@twitter"));
+    const { token } = JSON.parse(localStorage.getItem("@twitter"));
     const response = await api.get("/tweets", {
       headers: { Authorization: `Bearer ${token}` }
     });
@@ -55,7 +55,7 @@ function Timeline() {
 
   async function handleSubmit(e) {
     if (e.keyCode !== 13) return;
-    const token = JSON.parse(localStorage.getItem("@twitter"));
+    const { token } = JSON.parse(localStorage.getItem("@twitter"));
     await api.post(
       "/tweets",
       { content },
