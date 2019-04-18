@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import twitter from "../twitter.svg";
-import api from '../services/api'
+import api from "../services/api";
 
 const Wrapper = styled.div`
   height: 100%;
@@ -50,17 +50,24 @@ const Button = styled.button`
 function Login({ history }) {
   const [value, setValues] = useState({ password: "", name: "" });
   async function handleSubmit(e) {
-    e.preventDefault()
-    const { data } = await api.post('/session', value)
-    localStorage.setItem('@twitter', JSON.stringify(data.token))
-    return history.push('/timeline')
+    e.preventDefault();
+    const { data } = await api.post("/session", value);
+    localStorage.setItem("@twitter", JSON.stringify(data));
+    return history.push("/timeline");
   }
   return (
     <Wrapper>
       <img src={twitter} alt="Go Twitter" />
       <Form onSubmit={handleSubmit}>
-        <Input placeholder="Nome do usuário" onChange={(e) => setValues({...value, name: e.target.value})}/>
-        <Input type="password" placeholder="Senha" onChange={(e) => setValues({...value, password: e.target.value})} />
+        <Input
+          placeholder="Nome do usuário"
+          onChange={e => setValues({ ...value, name: e.target.value })}
+        />
+        <Input
+          type="password"
+          placeholder="Senha"
+          onChange={e => setValues({ ...value, password: e.target.value })}
+        />
         <Button>Entrar</Button>
       </Form>
     </Wrapper>
