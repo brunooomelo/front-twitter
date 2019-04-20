@@ -8,7 +8,6 @@ import Tweet from "../components/Tweet";
 const Wrapper = styled.div`
   width: 600px;
   margin: 50px auto;
-
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -28,6 +27,7 @@ const TextArea = styled.textarea`
   padding: 15px;
   width: 100%;
   resize: none;
+  margin-bottom: 30px;
 `;
 
 const TweetList = styled.div`
@@ -35,21 +35,36 @@ const TweetList = styled.div`
   color: #1c2022;
 `;
 
-function Timeline() {
+function Timeline({ history }) {
   const [content, setContent] = useState("");
   const [tweets, setTweets] = useState([]);
 
   async function getTweets() {
-    const { token } = JSON.parse(localStorage.getItem("@twitter"));
-    const response = await api.get("/tweets", {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    setTweets(response.data);
+    try {
+      const { token } = JSON.parse(localStorage.getItem("@twitter"));
+      const response = await api.get("/tweets", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setTweets(response.data);
+    } catch (error) {
+      if (error.response.status === 401) {
+        localStorage.clear("@twitter");
+        return history.push("/");
+      }
+      return error;
+    }
   }
 
   function subscribeToEvents() {
     io.on("tweet", data => {
       setTweets([data, ...tweets]);
+    });
+    io.on("like", data => {
+      setTweets([
+        ...tweets.map(tweet =>
+          tweet._id === data._id ? { ...tweet, likes: data.likes } : tweet
+        )
+      ]);
     });
   }
 
@@ -76,7 +91,7 @@ function Timeline() {
 
   return (
     <Wrapper>
-      <img height={24} src={twitterLogo} alt="GoTwitter" />
+      <img height={50} src={twitterLogo} alt="GoTwitter" />
       <Form>
         <TextArea
           placeholder="O que está acontecendo?"
