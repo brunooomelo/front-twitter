@@ -37,10 +37,21 @@ const Image = styled.img`
   margin-right: 5px;
 `;
 
-function Tweet({ tweet }) {
+function Tweet({ tweet, history }) {
   async function handleLike() {
-    const { _id } = tweet;
-    await api.post(`/likes/${_id}`);
+    try {
+      const { _id } = tweet;
+      const { token } = JSON.parse(localStorage.getItem('@twitter'))
+      await api.post(`/likes/${_id}`,{},{
+        headers: { Authorization: `Bearer ${token}` }
+      });
+    } catch (error) {
+      if(error.response.status === 401) {
+        localStorage.clear('@twitter')
+        return history.push('/')
+      }
+      return error
+    }
   }
   return (
     <Wrapper>
