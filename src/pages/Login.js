@@ -47,6 +47,11 @@ const Button = styled.button`
   }
 `;
 
+const ButtonInverted = styled(Button)`
+  color: #4bb0ee;
+  background: #fff;
+  border: 1px solid #4bb0ee;
+`;
 function Login({ history }) {
   const [value, setValues] = useState({ password: "", name: "" });
   async function handleSubmit(e) {
@@ -68,7 +73,10 @@ function Login({ history }) {
           placeholder="Senha"
           onChange={e => setValues({ ...value, password: e.target.value })}
         />
-        <Button>Entrar</Button>
+        <Button type="submit">Entrar</Button>
+        <ButtonInverted type="button" onClick={() => history.push("/signup")}>
+          Cadastrar
+        </ButtonInverted>
       </Form>
     </Wrapper>
   );
