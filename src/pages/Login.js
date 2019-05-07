@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import twitter from "../twitter.svg";
 import api from "../services/api";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Wrapper = styled.div`
   height: 100%;
@@ -45,6 +47,9 @@ const Button = styled.button`
   &::hover {
     background: #42a1db;
   }
+  &:disabled {
+    background: #6e95ad;
+  }
 `;
 
 const ButtonInverted = styled(Button)`
@@ -56,10 +61,16 @@ function Login({ history }) {
   const [value, setValues] = useState({ password: "", name: "" });
   async function handleSubmit(e) {
     e.preventDefault();
-    const { data } = await api.post("/session", value);
-    localStorage.setItem("@twitter", JSON.stringify(data));
-    return history.push("/timeline");
+    try {
+      const { data } = await api.post("/session", value);
+      localStorage.setItem("@twitter", JSON.stringify(data));
+      return history.push("/timeline");
+    } catch (error) {
+      toast.error(`${error.message}`);
+      return setValues({ password: "", name: "" });
+    }
   }
+
   return (
     <Wrapper>
       <img src={twitter} alt="Go Twitter" />
@@ -73,7 +84,12 @@ function Login({ history }) {
           placeholder="Senha"
           onChange={e => setValues({ ...value, password: e.target.value })}
         />
-        <Button type="submit">Entrar</Button>
+        <Button
+          type="submit"
+          disabled={value.password === "" || value.name === ""}
+        >
+          Entrar
+        </Button>
         <ButtonInverted type="button" onClick={() => history.push("/signup")}>
           Cadastrar
         </ButtonInverted>
