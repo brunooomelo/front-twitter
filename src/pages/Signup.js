@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import twitter from "../twitter.svg";
 import api from "../services/api";
+import { toast } from "react-toastify";
 
 const Wrapper = styled.div`
   height: 100%;
@@ -63,10 +64,15 @@ function Login({ history }) {
     confirmPassword: ""
   });
   async function handleSubmit(e) {
-    e.preventDefault();
-    const { data } = await api.post("/session", value);
-    localStorage.setItem("@twitter", JSON.stringify(data));
-    return history.push("/timeline");
+    try {
+      e.preventDefault();
+      const { data } = await api.post("/session", value);
+      localStorage.setItem("@twitter", JSON.stringify(data));
+      return history.push("/timeline");
+    } catch (error) {
+      toast.error(`${error.message}`);
+      return setValues({ password: "", name: "", confirmPassword: "" });
+    }
   }
   return (
     <Wrapper>
