@@ -45,6 +45,9 @@ const Button = styled.button`
   &::hover {
     background: #42a1db;
   }
+  &:disabled {
+    background: #6e95ad;
+  }
 `;
 
 const ButtonInverted = styled(Button)`
@@ -52,8 +55,13 @@ const ButtonInverted = styled(Button)`
   background: #fff;
   border: 1px solid #4bb0ee;
 `;
+
 function Login({ history }) {
-  const [value, setValues] = useState({ password: "", name: "" });
+  const [value, setValues] = useState({
+    password: "",
+    name: "",
+    confirmPassword: ""
+  });
   async function handleSubmit(e) {
     e.preventDefault();
     const { data } = await api.post("/session", value);
@@ -73,9 +81,23 @@ function Login({ history }) {
           placeholder="Senha"
           onChange={e => setValues({ ...value, password: e.target.value })}
         />
-        <Button type="submit">Entrar</Button>
-        <ButtonInverted type="button" onClick={() => history.push("/signup")}>
+        <Input
+          type="password"
+          placeholder="Confirma senha"
+          onChange={e =>
+            setValues({ ...value, confirmPassword: e.target.value })
+          }
+        />
+        <Button
+          type="submit"
+          disabled={
+            value.password !== value.confirmPassword || value.password === ""
+          }
+        >
           Cadastrar
+        </Button>
+        <ButtonInverted type="button" onClick={() => history.push("/")}>
+          Voltar
         </ButtonInverted>
       </Form>
     </Wrapper>
