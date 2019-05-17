@@ -76,12 +76,15 @@ function Login({ history }) {
       <img src={twitter} alt="Go Twitter" />
       <Form onSubmit={handleSubmit}>
         <Input
+          type="text"
+          value={value.name}
           placeholder="Nome do usuário"
           onChange={e => setValues({ ...value, name: e.target.value })}
         />
         <Input
           type="password"
           placeholder="Senha"
+          value={value.password}
           onChange={e => setValues({ ...value, password: e.target.value })}
         />
         <Button

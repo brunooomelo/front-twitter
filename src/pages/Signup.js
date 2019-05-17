@@ -31,6 +31,7 @@ const Input = styled.input`
   padding: 0 15px;
   font-size: 14px;
   margin-bottom: 5px;
+  border: 1px solid ${prop => (prop.valid ? `#ddd` : "tomato")};
 `;
 const Button = styled.button`
   margin: 10px 0 0;
@@ -61,14 +62,15 @@ function Login({ history }) {
   const [value, setValues] = useState({
     password: "",
     name: "",
+    email: "",
     confirmPassword: ""
   });
   async function handleSubmit(e) {
     try {
       e.preventDefault();
-      const { data } = await api.post("/session", value);
-      localStorage.setItem("@twitter", JSON.stringify(data));
-      return history.push("/timeline");
+      await api.post("/user", value);
+      toast.success(`Cadastrado com sucesso`);
+      return history.push("/");
     } catch (error) {
       toast.error(`${error.message}`);
       return setValues({ password: "", name: "", confirmPassword: "" });
@@ -79,17 +81,31 @@ function Login({ history }) {
       <img src={twitter} alt="Go Twitter" />
       <Form onSubmit={handleSubmit}>
         <Input
+          type="text"
           placeholder="Nome do usuário"
+          value={value.name}
+          valid={true}
           onChange={e => setValues({ ...value, name: e.target.value })}
+        />
+        <Input
+          type="text"
+          placeholder="Email"
+          value={value.email}
+          valid={true}
+          onChange={e => setValues({ ...value, email: e.target.value })}
         />
         <Input
           type="password"
           placeholder="Senha"
+          value={value.password}
+          valid={value.password === value.confirmPassword || !value.password}
           onChange={e => setValues({ ...value, password: e.target.value })}
         />
         <Input
           type="password"
           placeholder="Confirma senha"
+          value={value.confirmPassword}
+          valid={value.password === value.confirmPassword || !value.password}
           onChange={e =>
             setValues({ ...value, confirmPassword: e.target.value })
           }

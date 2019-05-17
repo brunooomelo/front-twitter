@@ -1,5 +1,7 @@
 import React from "react";
+import { withRouter } from "react-router-dom";
 import styled from "styled-components";
+import { toast } from "react-toastify";
 import like from "../like.svg";
 import api from "../services/api";
 
@@ -41,16 +43,21 @@ function Tweet({ tweet, history }) {
   async function handleLike() {
     try {
       const { _id } = tweet;
-      const { token } = JSON.parse(localStorage.getItem('@twitter'))
-      await api.post(`/likes/${_id}`,{},{
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const { token } = JSON.parse(localStorage.getItem("@twitter"));
+      await api.post(
+        `/likes/${_id}`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      );
     } catch (error) {
-      if(error.response.status === 401) {
-        localStorage.clear('@twitter')
-        return history.push('/')
+      if (error.response.status === 401) {
+        toast.error(`Sessão expirada`);
+        localStorage.clear("@twitter");
+        return history.push("/");
       }
-      return error
+      return error;
     }
   }
   return (
@@ -65,4 +72,4 @@ function Tweet({ tweet, history }) {
   );
 }
 
-export default Tweet;
+export default withRouter(Tweet);

@@ -70,15 +70,23 @@ function Timeline({ history }) {
 
   async function handleSubmit(e) {
     if (e.keyCode !== 13) return;
-    const { token } = JSON.parse(localStorage.getItem("@twitter"));
-    await api.post(
-      "/tweets",
-      { content },
-      {
-        headers: { Authorization: `Bearer ${token}` }
+    try {
+      const { token } = JSON.parse(localStorage.getItem("@twitter"));
+      await api.post(
+        "/tweets",
+        { content },
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      );
+      setContent("");
+    } catch (error) {
+      if (error.response.status === 401) {
+        localStorage.clear("@twitter");
+        return history.push("/");
       }
-    );
-    setContent("");
+      return error;
+    }
   }
 
   useEffect(() => {
